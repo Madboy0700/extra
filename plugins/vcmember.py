@@ -5,10 +5,11 @@ from YukkiMusic import app
 from YukkiMusic.utils import Yukkibin
 from YukkiMusic.utils.database import get_assistant, get_lang
 
-@app.on_message(
-    filters.command(["vcuser", "vcusers", "vcmember", "vcmembers"]) & filters.admin
-)
+# Admin kontrolü için alternatif bir yöntem
+@app.on_message(filters.command(["vcuser", "vcusers", "vcmember", "vcmembers"]) & filters.user(user_id=admin_id))
 async def vc_members(client, message):
+    # Kodun geri karşıla
+    
     try:
         # Sohbetin dilini al
         language = await get_lang(message.chat.id)
