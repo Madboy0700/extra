@@ -1,15 +1,25 @@
 from pyrogram import Client, filters
-from pyrogram.enums import ChatType
+from pyrogram.types import ChatMember
 from strings import get_string
 from YukkiMusic import app
 from YukkiMusic.utils import Yukkibin
 from YukkiMusic.utils.database import get_assistant, get_lang
 
 
-@app.on_message(
-    filters.command(["vcuser", "vcusers", "vcmember", "vcmembers"]) & filters.admin
-)
+@app.on_message(filters.command(["vcuser", "vcusers", "vcmember", "vcmembers"]))
 async def vc_members(client, message):
+    try:
+        # Admin kontrolü yap
+        user_id = message.from_user.id
+        chat_id = message.chat.id
+        member = await client.get_chat_member(chat_id, user_id)
+
+        if member.status not in [ChatMember.ADMINISTRATOR, ChatMember.CREATOR]:
+            return await message.reply("Bu komutu kullanmak için admin olmalısınız.")
+        
+    except Exception as e:
+        return await message.reply(f"Bir hata oluştu: {str(e)}")
+
     try:
         # Dil ayarlarını al
         language = await get_lang(message.chat.id)
