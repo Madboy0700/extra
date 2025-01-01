@@ -24,21 +24,21 @@ from utils.permissions import adminsOnly, member_permissions
 from .notes import extract_urls
 
 
-__MODULE__ = "Filters"
-__HELP__ = """/filters To Get All The Filters In The Chat.
-/filter [FILTER_NAME] To Save A Filter(reply to a message).
+__MODULE__ = "Filtreler"
+__HELP__ = """/filters Tüm filtreleri almak için.
+/filter [FILTER_NAME] Bir filtre kaydetmek için (bir mesaja yanıt vererek).
 
-Supported filter types are Text, Animation, Photo, Document, Video, video notes, Audio, Voice.
+Desteklenen filtre türleri: Metin, Animasyon, Fotoğraf, Belge, Video, video notları, Ses, Sesli mesaj.
 
-To use more words in a filter use.
-`/filter Hey_there` To filter "Hey there".
+Bir filtrede daha fazla kelime kullanmak için:
+`/filter Hey_there` "Hey orada" filtresi için.
 
-/stop [FILTER_NAME] To Stop A Filter.
-/stopall To delete all the filters in a chat (permanently).
+ /stop [FILTER_NAME] Bir filtreyi durdurmak için.
+/stopall Bir sohbetteki tüm filtreleri silmek için (kalıcı olarak).
 
-You can use markdown or html to save text too.
+Metin kaydetmek için markdown veya html de kullanabilirsiniz.
 
-Checkout /markdownhelp to know more about formattings and other syntax.
+Biçimlendirme ve diğer sözdizimleri hakkında daha fazla bilgi için /markdownhelp komutuna göz atın.
 """
 
 
@@ -48,7 +48,7 @@ async def save_filters(_, message):
     try:
         if len(message.command) < 2:
             return await message.reply_text(
-                "**ᴜsᴀsɢᴇ:**\nʀᴇᴘʟʏ ᴛᴏ ᴀ ᴍᴇssᴀɢᴇ ᴡɪᴛʜ  /filter [FILTER_NAME] [CONTENT] ᴛᴏ sᴇᴛ ᴀ ɴᴇᴡ ғɪʟᴛᴇʀ."
+                "**KULLANIM:**\nBir mesaja yanıt vererek /filter [FILTER_NAME] [İÇERİK] ile yeni bir filtre ayarlayın."
             )
         replied_message = message.reply_to_message
         if not replied_message:
@@ -56,11 +56,11 @@ async def save_filters(_, message):
         data, name = await get_data_and_name(replied_message, message)
         if len(name) < 2:
             return await message.reply_text(
-                f"ᴛᴏ ғɪʟᴛᴇʀ ᴛʜᴇ {name} ᴍᴜsᴛ ʙᴇ ɢʀᴇᴀᴛᴇʀ ᴛʜᴇɴ 𝟸 ᴡᴏʀᴅs"
+                f"Filtrelemek için {name} 2 kelimeden fazla olmalıdır."
             )
         if data == "error":
             return await message.reply_text(
-                "**ᴜsᴀsɢᴇ:**\n__/filter [FILTER_NAME] [CONTENT]__\n`-----------OR-----------`\nʀᴇᴘʟʏ ᴛᴏ ᴀ ᴍᴇssᴀɢᴇ ᴡɪᴛʜ. \n/filter [FILTER_NAME]."
+                "**KULLANIM:**\n__/filter [FILTER_NAME] [İÇERİK]__\n`-----------VEYA-----------`\nBir mesaja yanıt vererek. \n/filter [FILTER_NAME]."
             )
         if replied_message.text:
             _type = "text"
@@ -100,7 +100,7 @@ async def save_filters(_, message):
             data = await check_format(ikb, data)
             if not data:
                 return await message.reply_text(
-                    "**ᴡʀᴏɴɢ ғᴏʀᴍᴀᴛᴛɪɴɢ, ᴄʜᴇᴄᴋ ᴛʜᴇ ʜᴇʟᴘ sᴇᴄᴛɪᴏɴ.**"
+                    "**YANLIŞ BİÇİMLENDİRME, YARDIM bölümünü kontrol edin.**"
                 )
         name = name.replace("_", " ")
         _filter = {
@@ -111,24 +111,24 @@ async def save_filters(_, message):
 
         chat_id = message.chat.id
         await save_filter(chat_id, name, _filter)
-        return await message.reply_text(f"__**sᴀᴠᴇᴅ ғɪʟᴛᴇʀ {name}.**__")
+        return await message.reply_text(f"__**Filtre {name} kaydedildi.**__")
     except UnboundLocalError:
         return await message.reply_text(
-            "**ʀᴇᴘʟɪᴇᴅ ᴍᴇssᴀɢᴇ ɪs ɪɴᴀᴄᴇssᴀʙʟᴇ.\n`ғᴏʀᴡᴀʀᴅ ᴛʜᴇ ᴍᴇssᴀɢᴇ ᴀɴᴅ ᴛʀʏ ᴀɢᴀɪɴ.`**"
+            "**Yanıt verilen mesaj erişilemez.\n`Mesajı iletin ve tekrar deneyin.`**"
         )
 
 
 @app.on_message(filters.command("filters") & ~filters.private & ~BANNED_USERS)
 @capture_err
 async def get_filterss(_, message):
-    _filters = await get_filters_names(message.chat.id)
+    _filters = await get_filters_names(message.chat.id)  # Sohbetin filtre isimlerini al
     if not _filters:
-        return await message.reply_text("**ɴᴏ ғɪʟᴛᴇʀs ɪɴ ᴛʜᴇ ᴄʜᴀᴛ.**")
-    _filters.sort()
-    msg = f"ʟɪsᴛ ᴏғ ғɪʟᴛᴇʀs ɪɴ ᴛʜᴇ **{message.chat.title}** :\n"
+        return await message.reply_text("**Bu sohbette hiç filtre yok.**")
+    _filters.sort()  # Filtreleri sırala
+    msg = f"**{message.chat.title}** içindeki filtrelerin listesi:\n"
     for _filter in _filters:
-        msg += f"**-** `{_filter}`\n"
-    await message.reply_text(msg)
+        msg += f"**-** `{_filter}`\n"  # Her bir filtreyi mesajda göster
+    await message.reply_text(msg)  # Mesajı gönder
 
 
 @app.on_message(
@@ -145,20 +145,20 @@ async def filters_re(_, message):
     from_user = message.from_user if message.from_user else message.sender_chat
     user_id = from_user.id
     chat_id = message.chat.id
-    text = message.text.lower().strip()
+    text = message.text.lower().strip()  # Mesajı küçük harfe çevir ve boşlukları temizle
     if not text:
         return
-    chat_id = message.chat.id
-    list_of_filters = await get_filters_names(chat_id)
+    list_of_filters = await get_filters_names(chat_id)  # Sohbetin filtre isimlerini al
     for word in list_of_filters:
-        pattern = r"( |^|[^\w])" + re.escape(word) + r"( |$|[^\w])"
-        if re.search(pattern, text, flags=re.IGNORECASE):
-            _filter = await get_filter(chat_id, word)
-            data_type = _filter["type"]
-            data = _filter["data"]
-            file_id = _filter.get("file_id")
+        pattern = r"( |^|[^\w])" + re.escape(word) + r"( |$|[^\w])"  # Filtre kelimesini aramak için düzenli ifade
+        if re.search(pattern, text, flags=re.IGNORECASE):  # Filtre kelimesini bul
+            _filter = await get_filter(chat_id, word)  # Filtre verilerini al
+            data_type = _filter["type"]  # Filtre türünü al
+            data = _filter["data"]  # Filtre verisini al
+            file_id = _filter.get("file_id")  # Dosya ID'sini al
             keyb = None
             if data:
+                # Yer tutucuları gerçek değerlerle değiştir
                 if "{app.mention}" in data:
                     data = data.replace("{app.mention}", app.mention)
                 if "{GROUPNAME}" in data:
@@ -170,10 +170,10 @@ async def filters_re(_, message):
                 if "{FIRSTNAME}" in data:
                     data = data.replace("{FIRSTNAME}", message.from_user.first_name)
                 if "{SURNAME}" in data:
-                    sname = message.from_user.last_name or "None"
+                    sname = message.from_user.last_name or "Yok"
                     data = data.replace("{SURNAME}", sname)
                 if "{USERNAME}" in data:
-                    susername = message.from_user.username or "None"
+                    susername = message.from_user.username or "Yok"
                     data = data.replace("{USERNAME}", susername)
                 if "{DATE}" in data:
                     DATE = datetime.datetime.now().strftime("%Y-%m-%d")
@@ -185,11 +185,11 @@ async def filters_re(_, message):
                     TIME = datetime.datetime.now().strftime("%H:%M:%S")
                     data = data.replace("{TIME}", f"{TIME} UTC")
 
-                if re.findall(r"\[.+\,.+\]", data):
+                if re.findall(r"\[.+\,.+\]", data):  # Eğer klavye varsa
                     keyboard = extract_text_and_keyb(ikb, data)
                     if keyboard:
                         data, keyb = keyboard
-            replied_message = message.reply_to_message
+            replied_message = message.reply_to_message  # Yanıtlanan mesajı al
             if replied_message:
                 replied_user = (
                     replied_message.from_user
@@ -197,10 +197,11 @@ async def filters_re(_, message):
                     else replied_message.sender_chat
                 )
                 if text.startswith("~"):
-                    await message.delete()
+                    await message.delete()  # Eğer mesaj "~" ile başlıyorsa sil
                 if replied_user.id != from_user.id:
-                    message = replied_message
+                    message = replied_message  # Yanıtlanan mesajı kullan
 
+            # Filtre türüne göre yanıt gönder
             if data_type == "text":
                 await message.reply_text(
                     text=data,
@@ -254,26 +255,26 @@ async def filters_re(_, message):
                     caption=data,
                     reply_markup=keyb,
                 )
-            return  # NOTE: Avoid filter spam
+            return  # NOT: Filtre spamını önlemek için
 
 
 @app.on_message(filters.command("stopall") & ~filters.private & ~BANNED_USERS)
 @adminsOnly("can_change_info")
 async def stop_all(_, message):
-    _filters = await get_filters_names(message.chat.id)
+    _filters = await get_filters_names(message.chat.id)  # Sohbetin filtre isimlerini al
     if not _filters:
-        await message.reply_text("**ɴᴏ ғɪʟᴛᴇʀs ɪɴ ᴛʜɪs ᴄʜᴀᴛ.**")
+        await message.reply_text("**Bu sohbette hiç filtre yok.**")
     else:
         keyboard = InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("ʏᴇs, ᴅᴏ ɪᴛ", callback_data="stop_yes"),
-                    InlineKeyboardButton("ɴᴏ, ᴅᴏɴ'ᴛ ᴅᴏ ɪᴛ", callback_data="stop_no"),
+                    InlineKeyboardButton("Evet, sil", callback_data="stop_yes"),
+                    InlineKeyboardButton("Hayır, silme", callback_data="stop_no"),
                 ]
             ]
         )
         await message.reply_text(
-            "**ᴀʀᴇ ʏᴏᴜ sᴜʀᴇ ʏᴏᴜ ᴡᴀɴᴛ ᴛᴏ ᴅᴇʟᴇᴛᴇ ᴀʟʟ ᴛʜᴇ ғɪʟᴛᴇʀs ɪɴ ᴛʜɪs ᴄʜᴀᴛ ғᴏʀᴇᴠᴇʀ ?.**",
+            "**Tüm filtreleri kalıcı olarak silmek istediğinizden emin misiniz?**",
             reply_markup=keyboard,
         )
 
@@ -282,20 +283,37 @@ async def stop_all(_, message):
 async def stop_all_cb(_, cb):
     chat_id = cb.message.chat.id
     from_user = cb.from_user
-    permissions = await member_permissions(chat_id, from_user.id)
+    permissions = await member_permissions(chat_id, from_user.id)  # Kullanıcının izinlerini al
     permission = "can_change_info"
     if permission not in permissions:
         return await cb.answer(
-            f"ʏᴏᴜ ᴅᴏɴ'ᴛ ʜᴀᴠᴇ ᴛʜᴇ ʀᴇᴄǫᴜʀɪᴇᴅ ᴘᴇʀᴍɪssɪᴏɴ.\n ᴘᴇʀᴍɪssɪᴏɴ: {permission}",
+            f"Bu izne sahip değilsiniz.\nİzin: {permission}",
             show_alert=True,
         )
-    input = cb.data.split("_", 1)[1]
+    input = cb.data.split("_", 1)[1]  # Callback verisini al
     if input == "yes":
-        stoped_all = await deleteall_filters(chat_id)
+        stoped_all = await deleteall_filters(chat_id)  # Tüm filtreleri sil
         if stoped_all:
             return await cb.message.edit(
-                "**sᴜᴄᴇssғᴜʟʟʏ ᴅᴇʟᴇᴅᴇᴅ ᴀʟʟ ғɪʟᴛᴇʀ's ᴏɴ ᴛʜɪs ᴄʜᴀᴛ.**"
+                "**Tüm filtreler başarıyla silindi.**"
             )
     if input == "no":
-        await cb.message.reply_to_message.delete()
-        await cb.message.delete()
+        await cb.message.reply_to_message.delete()  # Yanıtlanan mesajı sil
+        await cb.message.delete()  # Callback mesajını sil # Yukarıdaki kodun devamı yok, ancak burada genel bir özet ve açıklama yapabilirim.
+
+# Bu kod, Telegram botu için filtre yönetimi işlevselliği sağlar.
+# Kullanıcılar belirli komutlar ile filtreleri kaydedebilir, görüntüleyebilir ve silebilirler.
+
+# Filtreler, belirli kelimeleri veya ifadeleri tanımlamak için kullanılır ve bu kelimelerle eşleşen mesajlara yanıt olarak belirli içerikler gönderilir.
+# Örneğin, bir kullanıcı "/filter merhaba" komutunu kullanarak "merhaba" kelimesini filtreleyebilir ve bu kelime kullanıldığında bot belirli bir yanıt verebilir.
+
+# Ayrıca, kullanıcılar "/stopall" komutunu kullanarak tüm filtreleri kalıcı olarak silebilirler. Bu işlem için onay alınır.
+
+# Kodda kullanılan bazı önemli fonksiyonlar:
+# - save_filters: Yeni bir filtre kaydeder.
+# - get_filterss: Mevcut filtrelerin listesini alır.
+# - filters_re: Kullanıcı mesajlarını kontrol eder ve filtreleri uygular.
+# - stop_all: Tüm filtreleri silmek için onay alır.
+# - stop_all_cb: Kullanıcının onayına göre tüm filtreleri siler veya işlemi iptal eder.
+
+# Eğer daha fazla bilgi veya belirli bir bölüm hakkında daha fazla açıklama isterseniz, lütfen belirtin!
