@@ -30,7 +30,6 @@ from .notes import extract_urls
 
 
 async def handle_left_member(member, chat):
-
     try:
         if member.id in SUDOERS:
             return
@@ -38,9 +37,9 @@ async def handle_left_member(member, chat):
             await chat.ban_member(member.id)
             await app.send_message(
                 chat.id,
-                f"{member.mention} ᴡᴀs ɢʟᴏʙᴀʟʟʏ ʙᴀɴɴᴇᴅ, ᴀɴᴅ ɢᴏᴛ ʀᴇᴍᴏᴠᴇᴅ,"
-                + " ɪғ ʏᴏᴜ ᴛʜɪɴᴋ ᴛʜɪs ɪs ᴀ ғᴀʟsᴇ ɢʙᴀɴ, ʏᴏᴜ ᴄᴀɴ ᴀᴘᴘᴇᴀʟ"
-                + " ғᴏʀ ᴛʜɪs ʙᴀɴ ɪɴ sᴜᴘᴘᴏʀᴛ ᴄʜᴀᴛ",
+                f"{member.mention} küresel olarak yasaklandı ve çıkarıldı. "
+                + "Eğer bunun yanlış bir yasak olduğunu düşünüyorsanız, "
+                + "destek sohbetinde itiraz edebilirsiniz.",
             )
             return
         if member.is_bot:
@@ -84,8 +83,8 @@ async def send_left_message(chat: Chat, user_id: int, delete: bool = False):
         "{ID}": f"`{user_id}`",
         "{FIRSTNAME}": u.first_name,
         "{GROUPNAME}": chat.title,
-        "{SURNAME}": u.last_name or "None",
-        "{USERNAME}": u.username or "None",
+        "{SURNAME}": u.last_name or "Yok",
+        "{USERNAME}": u.username or "Yok",
         "{DATE}": datetime.datetime.now().strftime("%Y-%m-%d"),
         "{WEEKDAY}": datetime.datetime.now().strftime("%A"),
         "{TIME}": datetime.datetime.now().strftime("%H:%M:%S") + " UTC",
@@ -121,12 +120,12 @@ async def send_left_message(chat: Chat, user_id: int, delete: bool = False):
 @app.on_message(filters.command("setgoodbye") & ~filters.private)
 @adminsOnly("can_change_info")
 async def set_goodbye_func(_, message):
-    usage = "Yᴏᴜ ɴᴇᴇᴅ ᴛᴏ ʀᴇᴘʟʏ ᴛᴏ ᴀ ᴛᴇxᴛ, ɢɪғ ᴏʀ ᴘʜᴏᴛᴏ ᴛᴏ sᴇᴛ ɪᴛ ᴀs ɢᴏᴏᴅʙʏᴇ ᴍᴇssᴀɢᴇ.\n\nᴏᴛᴇs: ᴄᴀᴘᴛɪᴏɴ ʀᴇǫᴜɪʀᴇᴅ ғᴏʀ ɢɪғ ᴀɴᴅ ᴘʜᴏᴛᴏ."
+    usage = "Bir metne yanıt vermeniz gerekiyor, GIF veya fotoğraf ile bunu iyi bir veda mesajı olarak ayarlamak için.\n\nNot: GIF ve fotoğraf için başlık gereklidir."
     key = InlineKeyboardMarkup(
         [
             [
                 InlineKeyboardButton(
-                    text="More Help",
+                    text="Daha Fazla Yardım",
                     url=f"t.me/{app.username}?start=greetings",
                 )
             ],
@@ -168,16 +167,16 @@ async def set_goodbye_func(_, message):
         if raw_text:
             await set_goodbye(chat_id, goodbye, raw_text, file_id)
             return await message.reply_text(
-                "ɢᴏᴏᴅʙʏᴇ ᴍᴇssᴀɢᴇ ʜᴀs ʙᴇᴇɴ sᴜᴄᴄᴇssғᴜʟʟʏ sᴇᴛ."
+                "Veda mesajı başarıyla ayarlandı."
             )
         else:
             return await message.reply_text(
-                "Wʀᴏɴɢ ғᴏʀᴍᴀᴛᴛɪɴɢ, ᴄʜᴇᴄᴋ ᴛʜᴇ ʜᴇʟᴘ sᴇᴄᴛɪᴏɴ.\n\n**Usᴀsɢᴇ:**\nTᴛᴇxᴛ: `Text`\nᴛᴇxᴛ + ʙᴜᴛᴛᴏɴs: `Text ~ Buttons`",
+                "Yanlış biçimlendirme, lütfen yardım bölümünü kontrol edin.\n\n**Kullanım:**\nMetin: `Text`\nMetin + Butonlar: `Text ~ Butonlar`",
                 reply_markup=key,
             )
     except UnboundLocalError:
         return await message.reply_text(
-            "**Oɴʟʏ Tᴇxᴛ, Gɪғ ᴀɴᴅ Pʜᴏᴛᴏ ᴡᴇʟᴄᴏᴍᴇ ᴍᴇssᴀɢᴇ ᴀʀᴇ sᴜᴘᴘᴏʀᴛᴇᴅ.**"
+            "**Sadece Metin, GIF ve Fotoğraf veda mesajı olarak desteklenmektedir.**"
         )
 
 
@@ -186,7 +185,7 @@ async def set_goodbye_func(_, message):
 async def del_goodbye_func(_, message):
     chat_id = message.chat.id
     await del_goodbye(chat_id)
-    await message.reply_text("Gᴏᴏᴅʙʏᴇ ᴍᴇssᴀɢᴇ ʜᴀs ʙᴇᴇɴ Dᴇʟᴇᴛᴇᴅ Sᴜᴄᴄᴇssғᴜʟʟʏ")
+    await message.reply_text("Veda mesajı başarıyla silindi.")
 
 
 @app.on_message(filters.command("goodbye") & ~filters.private)
@@ -203,33 +202,33 @@ async def goodbye(client, message: Message):
             success = await set_greetings_on(message.chat.id, "goodbye")
             if success:
                 await message.reply_text(
-                    "I'ʟʟ ʙᴇ sᴀʏɪɴɢ ɢᴏᴏᴅʙʏᴇ ᴛᴏ ᴀɴʏ ʟᴇᴀᴠᴇʀs ғʀᴏᴍ ɴᴏᴡ ᴏɴ!"
+                    "Artık ayrılanlara veda edeceğim!"
                 )
             else:
-                await message.reply_text("Fᴀɪʟᴇᴅ ᴛᴏ ᴇɴᴀʙʟᴇ ɢᴏᴏᴅʙʏᴇ ᴍᴇssᴀɢᴇs.")
+                await message.reply_text("Veda mesajını etkinleştirmede başarısız olundu.")
 
         elif action in ["off", "disable", "n", "no", "false", "f"]:
             success = await set_greetings_off(message.chat.id, "goodbye")
             if success:
-                await message.reply_text("I'ʟʟ sᴛᴀʏ ǫᴜɪᴇᴛ ᴡʜᴇɴ ᴘᴇᴏᴘʟᴇ ʟᴇᴀᴠᴇ.")
+                await message.reply_text("Artık ayrılanlara veda etmeyeceğim.")
             else:
-                await message.reply_text("Fᴀɪʟᴇᴅ ᴛᴏ ᴅɪsᴀʙʟᴇ ɢᴏᴏᴅʙʏᴇ ᴍᴇssᴀɢᴇs.")
+                await message.reply_text("Veda mesajını devre dışı bırakmada başarısız olundu.")
 
         else:
             await message.reply_text(
-                "Iɴᴠᴀʟɪᴅ ᴄᴏᴍᴍᴀɴᴅ. Pʟᴇᴀsᴇ ᴜsᴇ:\n"
-                "/goodbye - Tᴏ ɢᴇᴛ ʏᴏᴜʀ ɢᴏᴏᴅʙʏᴇ ᴍᴇssᴀɢᴇ\n"
-                "/goodbye [on, y, true, enable, t] - ᴛᴏ ᴛᴜʀɴ ᴏɴ ɢᴏᴏᴅʙʏᴇ ᴍᴇssᴀɢᴇs\n"
-                "/goodbye [off, n, false, disable, f, no] - ᴛᴏ ᴛᴜʀɴ ᴏғғ ɢᴏᴏᴅʙʏᴇ ᴍᴇssᴀɢᴇs\n"
-                "/delgoodbye ᴏʀ /deletegoodbye ᴛᴏ ᴅᴇʟᴛᴇ ɢᴏᴏᴅʙʏᴇ ᴍᴇssᴀɢᴇ ᴀɴᴅ ᴛᴜʀɴ ᴏғғ ɢᴏᴏᴅʙʏᴇ"
+                "Geçersiz komut. Lütfen kullanın:\n"
+                "/goodbye - Veda mesajınızı almak için\n"
+                "/goodbye [on, y, true, enable, t] - Veda mesajlarını etkinleştirmek için\n"
+                "/goodbye [off, n, false, disable, f, no] - Veda mesajlarını devre dışı bırakmak için\n"
+                "/delgoodbye veya /deletegoodbye - Veda mesajını silmek ve veda mesajlarını devre dışı bırakmak için"
             )
     else:
         await message.reply_text(
-            "Iɴᴠᴀʟɪᴅ ᴄᴏᴍᴍᴀɴᴅ. Pʟᴇᴀsᴇ ᴜsᴇ:\n"
-            "/goodbye - Tᴏ ɢᴇᴛ ʏᴏᴜʀ ɢᴏᴏᴅʙʏᴇ ᴍᴇssᴀɢᴇ\n"
-            "/goodbye [on, y, true, enable, t] - ᴛᴏ ᴛᴜʀɴ ᴏɴ ɢᴏᴏᴅʙʏᴇ ᴍᴇssᴀɢᴇs\n"
-            "/goodbye [off, n, false, disable, f, no] - ᴛᴏ ᴛᴜʀɴ ᴏғғ ɢᴏᴏᴅʙʏᴇ ᴍᴇssᴀɢᴇs\n"
-            "/delgoodbye ᴏʀ /deletegoodbye ᴛᴏ ᴅᴇʟᴛᴇ ɢᴏᴏᴅʙʏᴇ ᴍᴇssᴀɢᴇ ᴀɴᴅ ᴛᴜʀɴ ᴏғғ ɢᴏᴏᴅʙʏᴇ"
+            "Geçersiz komut. Lütfen kullanın:\n"
+            "/goodbye - Veda mesajınızı almak için\n"
+            "/goodbye [on, y, true, enable, t] - Veda mesajlarını etkinleştirmek için\n"
+            "/goodbye [off, n, false, disable, f, no] - Veda mesajlarını devre dışı bırakmak için\n"
+            "/delgoodbye veya /deletegoodbye - Veda mesajını silmek ve veda mesajlarını devre dışı bırakmak için"
         )
 
 
@@ -238,53 +237,36 @@ async def get_goodbye_func(_, message):
     goodbye, raw_text, file_id = await get_goodbye(chat.id)
     if not raw_text:
         return await message.reply_text(
-            "Dɪᴅ Yᴏᴜ ʀᴇᴍᴇᴍʙᴇʀ ᴛʜᴀᴛ ʏᴏᴜ ʜᴀᴠᴇ sᴇᴛ's ᴀɴᴛ ɢᴏᴏᴅʙʏᴇ ᴍᴇssᴀɢᴇ"
+            "Henüz bir veda mesajı ayarlamadınız."
         )
     if not message.from_user:
-        return await message.reply_text("Yᴏᴜ'ʀᴇ ᴀɴᴏɴ, ᴄᴀɴ'ᴛ sᴇɴᴅ ɢᴏᴏᴅʙʏᴇ ᴍᴇssᴀɢᴇ.")
+        return await message.reply_text("Anonim olduğunuz için veda mesajı gönderemem.")
 
     await send_left_message(chat, message.from_user.id)
     is_grt = await is_greetings_on(chat.id, "goodbye")
     text = None
     if is_grt:
-        text = "Tʀᴜᴇ"
+        text = "Açık"
     else:
-        text = "Fᴀʟsᴇ"
+        text = "Kapalı"
+
     await message.reply_text(
-        f'I ᴀᴍ ᴄᴜʀʀᴇɴᴛʟʏ sᴀʏɪɴɢ ɢᴏᴏᴅʙʏᴇ ᴛᴏ ᴜsᴇʀs :- {text}\nGᴏᴏᴅʙʏᴇ: {goodbye}\n\nғɪʟᴇ_ɪᴅ: `{file_id}`\n\n`{raw_text.replace("`", "")}`'
+        f"Şu anda ayrılanlara veda mesajı gönderiyorum: {text}\n"
+        f"Veda Mesajı: {goodbye}\n\n"
+        f"Dosya ID: `{file_id}`\n\n"
+        f"`{raw_text.replace('`', '')}`"
     )
 
 
-__MODULE__ = "Gᴏᴏᴅʙʏᴇ"
+__MODULE__ = "Veda"
 __HELP__ = """
-ʜᴇʀᴇ ɪs ᴛʜᴇ ʜᴇʟᴘ ғᴏʀ ɢᴏᴏᴅʙʏᴇ:
+**Veda Mesajı Yönetimi:**
 
-/setgoodbye - Rᴇᴘʟʏ ᴛʜɪs ᴛᴏ ᴀ ᴍᴇssᴀɢᴇ ᴄᴏɴᴛᴀɪɴɪɴɢ ᴄᴏʀʀᴇᴄᴛ
-ғᴏʀᴍᴀᴛ ғᴏʀ ᴀ ᴡᴇʟᴄᴏᴍᴇ ᴍᴇssᴀɢᴇ, ᴄʜᴇᴄᴋ ᴇɴᴅ ᴏғ ᴛʜɪs ᴍᴇssᴀɢᴇ.
+/setgoodbye - Bir mesaja yanıt vererek veda mesajını ayarlayın. GIF veya fotoğraf ile ayarlamak için başlık gereklidir.
+/goodbye - Veda mesajınızı almak için kullanın.
+/goodbye [on, y, true, enable, t] - Veda mesajlarını etkinleştirmek için kullanın.
+/goodbye [off, n, false, disable, f, no] - Veda mesajlarını devre dışı bırakmak için kullanın.
+/delgoodbye veya /deletegoodbye - Veda mesajını silmek ve veda mesajlarını devre dışı bırakmak için kullanın.
 
-/goodbye - Tᴏ ɢᴇᴛ ʏᴏᴜʀ ɢᴏᴏᴅʙʏᴇ ᴍᴇssᴀɢᴇ
-
-/goodbye  [ᴏɴ, ʏ, ᴛʀᴜᴇ, ᴇɴᴀʙʟᴇ, ᴛ] - ᴛᴏ ᴛᴜʀɴ ᴏɴ ɢᴏᴏᴅʙʏᴇ ᴍᴇssᴀɢᴇs
-
-/goodbye [ᴏғғ, ɴ, ғᴀʟsᴇ, ᴅɪsᴀʙʟᴇ, ғ, ɴᴏ] - ᴛᴏ ᴛᴜʀɴ ᴏғғ ɢᴏᴏᴅʙʏᴇ ᴍᴇssᴀɢᴇs
-
-/delgoodbye ᴏʀ /deletegoodbye ᴛᴏ ᴅᴇʟᴛᴇ ɢᴏᴏᴅʙʏᴇ ᴍᴇssᴀɢᴇ ᴀɴᴅ ᴛᴜʀɴ ᴏғғ ɢᴏᴏᴅʙʏᴇ
-**SetoodBye ->
-
-
-Tᴏ sᴇᴛ ᴀ ᴘʜᴏᴛᴏ ᴏʀ ɢɪғ ᴀs ɢᴏᴏᴅʙʏᴇ ᴍᴇssᴀɢᴇ. Aᴅᴅ ʏᴏᴜʀ ɢᴏᴏᴅʙʏᴇ ᴍᴇssᴀɢᴇ ᴀs ᴄᴀᴘᴛɪᴏɴ ᴛᴏ ᴛʜᴇ ᴘʜᴏᴛᴏ ᴏʀ ɢɪғ. Tʜᴇ ᴄᴀᴘᴛɪᴏɴ ᴍᴜsᴇ ʙᴇ ɪɴ ᴛʜᴇ ғᴏʀᴍᴀᴛ ɢɪᴠᴇɴ ʙᴇʟᴏᴡ.**
-
-Fᴏʀ ᴛᴇxᴛ ɢᴏᴏᴅʙʏᴇ ᴍᴇssᴀɢᴇ Jᴜsᴛ sᴇɴᴅ ᴛʜᴇ ᴛᴇxᴛ. Tʜᴇɴ ʀᴇᴘʟʏ ᴡɪᴛʜ ᴛʜᴇ ᴄᴏᴍᴍᴀɴᴅ
-
-Tʜᴇ ғᴏʀᴍᴀᴛ sʜᴏᴜʟᴅ ʙᴇ sᴏᴍᴇᴛʜɪɴɢ ʟɪᴋᴇ ʙᴇʟᴏᴡ.
-
-Hɪ {NAME} [{ID}] Wᴇʟᴄᴏᴍᴇ ᴛᴏ {GROUPNAME}
-
-~ #Tʜɪs sᴇᴘᴀʀᴀᴛᴇʀ (~) sʜᴏᴜʟᴅ ʙᴇ ᴛʜᴇʀᴇ ʙᴇᴛᴡᴇᴇɴ ᴛᴇxᴛ ᴀɴᴅ ʙᴜᴛᴛᴏɴs, ʀᴇᴍᴏᴠᴇ ᴛʜɪs ᴄᴏᴍᴍᴇɴᴛ ᴀʟsᴏ
-
-Button=[Dᴜᴄᴋ, ʜᴛᴛᴘs://ᴅᴜᴄᴋᴅᴜᴄᴋɢᴏ.ᴄᴏᴍ]
-Button2=[Gɪᴛʜᴜʙ, ʜᴛᴛᴘs://ɢɪᴛʜᴜʙ.ᴄᴏᴍ]
-**NOTES ->**
-
-Cʜᴇᴄᴋᴏᴜᴛ /markdownhelp ᴛᴏ ᴋɴᴏᴡ ᴍᴏʀᴇ ᴀʙᴏᴜᴛ ғᴏʀᴍᴀᴛᴛɪɴɢs ᴀɴᴅ ᴏᴛʜᴇʀ sʏɴᴛᴀx.
+**Not:** Veda mesajı ayarlamak için metin, GIF veya fotoğraf kullanabilirsiniz. Başlık, GIF ve fotoğraf için gereklidir.
 """
