@@ -28,24 +28,24 @@ async def dice(c, m: Message):
         value = await c.send_dice(m.chat.id, reply_markup=keyboard)
 
     elif command == "/dart":
-
         value = await c.send_dice(m.chat.id, emoji="🎯", reply_to_message_id=m.id)
-        await value.reply_text("ʏᴏᴜʀ sᴄᴏʀᴇ ɪs {0}".format(value.dice.value))
+        await value.reply_text("Skorunuz: {0}".format(value.dice.value))
 
     elif command == "/basket" or command == "/basketball":
         basket = await c.send_dice(m.chat.id, emoji="🏀", reply_to_message_id=m.id)
-        await basket.reply_text("ʏᴏᴜʀ sᴄᴏʀᴇ ɪs {0}".format(basket.dice.value))
+        await basket.reply_text("Skorunuz: {0}".format(basket.dice.value))
 
     elif command == "/football":
         value = await c.send_dice(m.chat.id, emoji="⚽", reply_to_message_id=m.id)
-        await value.reply_text("ʏᴏᴜʀ sᴄᴏʀᴇ ɪs {0}".format(value.dice.value))
+        await value.reply_text("Skorunuz: {0}".format(value.dice.value))
 
     elif command == "/slot" or command == "/jackpot":
         value = await c.send_dice(m.chat.id, emoji="🎰", reply_to_message_id=m.id)
-        await value.reply_text("ʏᴏᴜʀ sᴄᴏʀᴇ ɪs {0}".format(value.dice.value))
+        await value.reply_text("Skorunuz: {0}".format(value.dice.value))
+        
     elif command == "/bowling":
         value = await c.send_dice(m.chat.id, emoji="🎳", reply_to_message_id=m.id)
-        await value.reply_text("ʏᴏᴜʀ sᴄᴏʀᴇ ɪs {0}".format(value.dice.value))
+        await value.reply_text("Skorunuz: {0}".format(value.dice.value))
 
 
 bored_api_url = "https://apis.scrimba.com/bored/api/activity"
@@ -58,11 +58,11 @@ async def bored_command(client, message):
         data = response.json()
         activity = data.get("activity")
         if activity:
-            await message.reply(f"𝗙𝗲𝗲𝗹𝗶𝗻𝗴 𝗯𝗼𝗿𝗲𝗱? 𝗛𝗼𝘄 𝗮𝗯𝗼𝘂𝘁:\n\n {activity}")
+            await message.reply(f"Canınız sıkılıyor mu? Nasıl olur:\n\n {activity}")
         else:
-            await message.reply("Nᴏ ᴀᴄᴛɪᴠɪᴛʏ ғᴏᴜɴᴅ.")
+            await message.reply("Hiçbir aktivite bulunamadı.")
     else:
-        await message.reply("Fᴀɪʟᴇᴅ ᴛᴏ ғᴇᴛᴄʜ ᴀᴄᴛɪᴠɪᴛʏ.")
+        await message.reply("Aktivite almakta başarısız olundu.")
 
 
 @app.on_callback_query(filters.regex(r"send_dice"))
@@ -79,16 +79,16 @@ async def dice_again(client, query):
     await client.send_dice(query.message.chat.id, reply_markup=keyboard)
 
 
-__MODULE__ = "Fᴜɴ"
+__MODULE__ = "Eğlence"
 __HELP__ = """
-**ʜᴀᴠɪɴɢ ꜰᴜɴ:**
+**Eğlenmek için:**
 
-• `/dice`: Rᴏʟʟs ᴀ ᴅɪᴄᴇ.
-• `/ludo`: Pʟᴀʏ Lᴜᴅᴏ.
-• `/dart`: Tʜʀᴏᴡs ᴀ ᴅᴀʀᴛ.
-• `/basket` ᴏʀ `/basketball`: Pʟᴀʏs ʙᴀsᴋᴇᴛʙᴀʟʟ.
-• `/football`: Pʟᴀʏs ғᴏᴏᴛʙᴀʟʟ.
-• `/slot` ᴏʀ `/jackpot`: Pʟᴀʏs ᴊᴀᴄᴋᴘᴏᴛ.
-• `/bowling`: Pʟᴀʏs ʙᴏᴡʟɪɴɢ.
-• `/bored`: Gᴇᴛs ʀᴀɴᴅᴏᴍ ᴀᴄᴛɪᴠɪᴛʏ ɪғ ʏᴏᴜ'ʀᴇ ʙᴏʀᴇᴅ.
+• `/dice`: Bir zar atar.
+• `/ludo`: Ludo oynar.
+• `/dart`: Dart atar.
+• `/basket` veya `/basketball`: Basketbol oynar.
+• `/football`: Futbol oynar.
+• `/slot` veya `/jackpot`: Jackpot oynar.
+• `/bowling`: Bowling oynar.
+• `/bored`: Canınız sıkılıyorsa rastgele bir aktivite alır.
 """
