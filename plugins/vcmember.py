@@ -7,7 +7,7 @@ from YukkiMusic.utils.database import get_assistant, get_lang
 
 
 @app.on_message(
-    filters.command(["vcuser", "vcusers", "vcmember", "vcmembers"]) & filters.admin
+    filters.command(["vcuser", "vcusers", "vcmember", "vcmembers"]) & filters
 )
 async def vc_members(client, message):
     try:
