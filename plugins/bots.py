@@ -7,30 +7,29 @@ from YukkiMusic import app
 
 @app.on_message(filters.command("bots") & filters.group)
 async def bots(client, message):
-
     try:
-        botList = []
+        botList = []  # Botların listesini tutmak için boş bir liste oluştur
         async for bot in app.get_chat_members(
             message.chat.id, filter=enums.ChatMembersFilter.BOTS
         ):
-            botList.append(bot.user)
-        lenBotList = len(botList)
-        text3 = f"**ʙᴏᴛ ʟɪsᴛ - {message.chat.title}**\n\n🤖 ʙᴏᴛs\n"
-        while len(botList) > 1:
-            bot = botList.pop(0)
-            text3 += f"├ @{bot.username}\n"
-        else:
-            bot = botList.pop(0)
-            text3 += f"└ @{bot.username}\n\n"
-            text3 += f"**ᴛᴏᴛᴀʟ ɴᴜᴍʙᴇʀ ᴏғ ʙᴏᴛs**: {lenBotList}**"
-            await app.send_message(message.chat.id, text3)
-    except FloodWait as e:
-        await asyncio.sleep(e.value)
+            botList.append(bot.user)  # Botları listeye ekle
+        lenBotList = len(botList)  # Bot sayısını al
+        text3 = f"**Bot Listesi - {message.chat.title}**\n\n🤖 Botlar\n"
+        while len(botList) > 1:  # Liste 1'den fazla bot içeriyorsa
+            bot = botList.pop(0)  # İlk botu çıkar
+            text3 += f"├ @{bot.username}\n"  # Botun kullanıcı adını ekle
+        else:  # Liste 1 bot içeriyorsa
+            bot = botList.pop(0)  # Son botu çıkar
+            text3 += f"└ @{bot.username}\n\n"  # Botun kullanıcı adını ekle
+            text3 += f"**Toplam Bot Sayısı**: {lenBotList}**"  # Toplam bot sayısını ekle
+            await app.send_message(message.chat.id, text3)  # Mesajı gönder
+    except FloodWait as e:  # FloodWait hatası alırsak
+        await asyncio.sleep(e.value)  # Belirtilen süre kadar bekle
 
 
-__MODULE__ = "Bᴏᴛs"
+__MODULE__ = "Botlar"  # Modül adı
 __HELP__ = """
-**ʙᴏᴛs**
+**Botlar**
 
-• /bots - ɢᴇᴛ ᴀ ʟɪsᴛ ᴏғ ʙᴏᴛs ɪɴ ᴛʜᴇ ɢʀᴏᴜᴘ.
+• /bots - Grubun içindeki botların listesini al.
 """
