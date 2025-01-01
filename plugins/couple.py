@@ -14,27 +14,21 @@ from YukkiMusic import app
 from utils import get_couple, get_image, save_couple
 
 
-# get current date in GMT+5:30 timezone
-
-
+# Mevcut tarihi GMT+5:30 saat diliminde al
 def get_today_date():
     timezone = pytz.timezone("Asia/Kolkata")
     now = datetime.now(timezone)
     return now.strftime("%d/%m/%Y")
 
 
-# get tomorrow's date in GMT+5:30 timezone
-
-
+# Yarın tarihini GMT+5:30 saat diliminde al
 def get_todmorrow_date():
     timezone = pytz.timezone("Asia/Kolkata")
     tomorrow = datetime.now(timezone) + timedelta(days=1)
     return tomorrow.strftime("%d/%m/%Y")
 
 
-# Download image from URL
-
-
+# URL'den resim indir
 def download_image(url, path):
     response = requests.get(url)
     if response.status_code == 200:
@@ -43,7 +37,7 @@ def download_image(url, path):
     return path
 
 
-# Dates
+# Tarihler
 tomorrow = get_todmorrow_date()
 today = get_today_date()
 
@@ -52,7 +46,7 @@ today = get_today_date()
 async def ctest(_, message):
     cid = message.chat.id
     if message.chat.type == ChatType.PRIVATE:
-        return await message.reply_text("Tʜɪs ᴄᴏᴍᴍᴀɴᴅ ᴏɴʟʏ ᴡᴏʀᴋs ɪɴ ɢʀᴏᴜᴘs.")
+        return await message.reply_text("Bu komut yalnızca gruplarda çalışır.")
 
     p1_path = "downloads/pfp.png"
     p2_path = "downloads/pfp1.png"
@@ -69,9 +63,9 @@ async def ctest(_, message):
                 if not i.user.is_bot and not i.user.is_deleted:
                     list_of_users.append(i.user.id)
 
-            c1_id = random.choice(list_of_users)
-            c2_id = random.choice(list_of_users)
-            while c1_id == c2_id:
+            c1_id = random.choice(list_of_users)  # İlk kullanıcıyı rastgele seç
+            c2_id = random.choice(list_of_users)  # İkinci kullanıcıyı rastgele seç
+            while c1_id == c2_id:  # İki kullanıcı aynı olmamalı
                 c1_id = random.choice(list_of_users)
 
             photo1 = (await app.get_chat(c1_id)).photo
@@ -123,13 +117,12 @@ async def ctest(_, message):
             img.save(test_image_path)
 
             TXT = f"""
-**Tᴏᴅᴀʏ's ᴄᴏᴜᴘʟᴇ ᴏғ ᴛʜᴇ ᴅᴀʏ:
+**Bugünün Çifti:
 
 {N1} + {N2} = 💚
 
-Nᴇxᴛ ᴄᴏᴜᴘʟᴇs ᴡɪʟʟ ʙᴇ sᴇʟᴇᴄᴛᴇᴅ ᴏɴ {tomorrow}!!**
+Sonraki çiftler {tomorrow} tarihinde seçilecektir!!**
             """
-
             await message.reply_photo(
                 test_image_path,
                 caption=TXT,
@@ -137,7 +130,7 @@ Nᴇxᴛ ᴄᴏᴜᴘʟᴇs ᴡɪʟʟ ʙᴇ sᴇʟᴇᴄᴛᴇᴅ ᴏɴ {tomorro
                     [
                         [
                             InlineKeyboardButton(
-                                text="Aᴅᴅ ᴍᴇ 🌋",
+                                text="Beni Ekle 🌋",
                                 url=f"https://t.me/{app.username}?startgroup=true",
                             )
                         ]
@@ -145,25 +138,25 @@ Nᴇxᴛ ᴄᴏᴜᴘʟᴇs ᴡɪʟʟ ʙᴇ sᴇʟᴇᴄᴛᴇᴅ ᴏɴ {tomorro
                 ),
             )
 
-            await msg.delete()
-            img_url = await api.upload_image(test_image_path)
-            couple = {"c1_id": c1_id, "c2_id": c2_id}
-            await save_couple(cid, today, couple, img_url)
+            await msg.delete()  # Önceki mesajı sil
+            img_url = await api.upload_image(test_image_path)  # Resmi API'ye yükle
+            couple = {"c1_id": c1_id, "c2_id": c2_id}  # Çift bilgilerini oluştur
+            await save_couple(cid, today, couple, img_url)  # Çifti kaydet
 
         else:
             msg = await message.reply_text("❣️")
-            b = await get_image(cid)
-            c1_id = int(is_selected["c1_id"])
-            c2_id = int(is_selected["c2_id"])
-            c1_name = (await app.get_users(c1_id)).first_name
-            c2_name = (await app.get_users(c2_id)).first_name
+            b = await get_image(cid)  # Daha önce kaydedilen çifti al
+            c1_id = int(is_selected["c1_id"])  # İlk kullanıcının ID'sini al
+            c2_id = int(is_selected["c2_id"])  # İkinci kullanıcının ID'sini al
+            c1_name = (await app.get_users(c1_id)).first_name  # İlk kullanıcının ismini al
+            c2_name = (await app.get_users(c2_id)).first_name  # İkinci kullanıcının ismini al
 
             TXT = f"""
-**Tᴏᴅᴀʏ's ᴄᴏᴜᴘʟᴇ ᴏғ ᴛʜᴇ ᴅᴀʏ 🎉:
+**Bugünün Çifti 🎉:
 
 [{c1_name}](tg://openmessage?user_id={c1_id}) + [{c2_name}](tg://openmessage?user_id={c2_id}) = ❣️
 
-Nᴇxᴛ ᴄᴏᴜᴘʟᴇs ᴡɪʟʟ ʙᴇ sᴇʟᴇᴄᴛᴇᴅ ᴏɴ {tomorrow}!!**
+Sonraki çiftler {tomorrow} tarihinde seçilecektir!!**
             """
             await message.reply_photo(
                 b,
@@ -172,22 +165,22 @@ Nᴇxᴛ ᴄᴏᴜᴘʟᴇs ᴡɪʟʟ ʙᴇ sᴇʟᴇᴄᴛᴇᴅ ᴏɴ {tomorro
                     [
                         [
                             InlineKeyboardButton(
-                                text="Aᴅᴅ ᴍᴇ🌋",
+                                text="Beni Ekle🌋",
                                 url=f"https://t.me/{app.username}?startgroup=true",
                             )
                         ]
                     ]
                 ),
             )
-            await msg.delete()
+            await msg.delete()  # Önceki mesajı sil
 
     except Exception:
-        pass
+        pass  # Hata durumunda hiçbir şey yapma
     finally:
         try:
-            os.remove(p1_path)
+            os.remove(p1_path)  # Geçici dosyaları sil
             os.remove(p2_path)
             os.remove(test_image_path)
             os.remove(cppic_path)
         except Exception:
-            pass
+            pass  # Silme işlemi sırasında hata olursa hiçbir şey yapma
